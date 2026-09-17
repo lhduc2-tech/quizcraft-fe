@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-hand: "Caveat", cursive;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-paper-50: #FDFBF7;
+  --color-paper-100: #F7F3EB;
+  --color-paper-200: #EEE7DA;
+  --color-paper-300: #DFD5C2;
+  --color-paper-400: #C7B99F;
+  --color-paper-500: #A8987E;
+  --color-paper-600: #7D705B;
+  --color-paper-700: #5C5242;
+  --color-paper-800: #3D372E;
+  --color-paper-900: #2A251E;
+  --color-paper-950: #1C1914;
+
+  --color-terracotta-50: #FDF5F2;
+  --color-terracotta-100: #FAECE6;
+  --color-terracotta-200: #F4D3C7;
+  --color-terracotta-300: #EAAEA0;
+  --color-terracotta-400: #E3836B;
+  --color-terracotta-500: #E06D53;
+  --color-terracotta-600: #C85338;
+  --color-terracotta-700: #A43E26;
+  --color-terracotta-800: #853320;
+  --color-terracotta-900: #6B2C1C;
+  --color-terracotta-950: #3B140A;
+
+  --color-sage-50: #F4F7F4;
+  --color-sage-100: #E6EFE6;
+  --color-sage-200: #CFE0CF;
+  --color-sage-300: #B2CCB3;
+  --color-sage-400: #88B08A;
+  --color-sage-500: #5F8265;
+  --color-sage-600: #4B6B51;
+  --color-sage-700: #3A543F;
+  --color-sage-800: #2F4232;
+  --color-sage-900: #263629;
+  --color-sage-950: #121C14;
+
+  --color-ink-50: #F6F7F9;
+  --color-ink-100: #ECEFF2;
+  --color-ink-800: #1E293B;
+  --color-ink-900: #0F172A;
+}
+
+/* Global readable scale for better accessibility */
+html {
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide number spin buttons across all browsers */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Subtle warm paper texture */
+body {
+  background-color: #F8F5EE;
+  background-image: radial-gradient(#E2DAC9 0.75px, transparent 0.75px), radial-gradient(#E2DAC9 0.75px, #F8F5EE 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
+
+.dark body {
+  background-color: #1A1815;
+  background-image: radial-gradient(#2F2B24 0.75px, transparent 0.75px), radial-gradient(#2F2B24 0.75px, #1A1815 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
+
+/* Notebook lined textarea */
+.notepad-lines {
+  background-image: repeating-linear-gradient(transparent, transparent 34px, #EBE3D3 34px, #EBE3D3 35px);
+  line-height: 35px;
+  padding-top: 6px;
+}
+
+.dark .notepad-lines {
+  background-image: repeating-linear-gradient(transparent, transparent 34px, #2A2620 34px, #2A2620 35px);
+}
+
+/* Tactile button pressed feel */
+.btn-tactile {
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 0 0 rgba(0,0,0,0.12);
+}
+
+.btn-tactile:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 0 rgba(0,0,0,0.12);
+}
+
+/* Washi tape visual */
+.washi-tape {
+  background-color: rgba(254, 240, 138, 0.75);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border-left: 2px dashed rgba(202, 138, 4, 0.3);
+  border-right: 2px dashed rgba(202, 138, 4, 0.3);
+}
+
+/* Paper clip accent */
+.paper-clip {
+  position: absolute;
+  top: -14px;
+  left: 24px;
+  width: 22px;
+  height: 44px;
+  border: 3px solid #94A3B8;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Highlighter underline effect */
+.highlight-brush {
+  background: linear-gradient(104deg, rgba(254,240,138,0) 0.9%, rgba(254,240,138,0.85) 2.4%, rgba(253,224,71,0.5) 94.6%);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.dark .highlight-brush {
+  background: linear-gradient(104deg, rgba(161,98,7,0) 0.9%, rgba(161,98,7,0.4) 2.4%, rgba(202,138,4,0.3) 94.6%);
+  color: #FEF08A;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}

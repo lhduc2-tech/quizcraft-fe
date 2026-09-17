@@ -1,0 +1,42 @@
+<!-- Header Navigation -->
+<app-header></app-header>
+
+<!-- Global Toast Notifications -->
+<app-toast></app-toast>
+
+<!-- Slide-out History Drawer -->
+<app-history></app-history>
+
+<!-- Main Workspace -->
+<main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+  @switch (state.currentView()) {
+    @case ('notebook') {
+      <app-notebook></app-notebook>
+    }
+    @case ('study') {
+      <app-study-deck></app-study-deck>
+    }
+    @case ('summary') {
+      <app-summary></app-summary>
+    }
+    @case ('review') {
+      <app-review-deck></app-review-deck>
+    }
+    @default {
+      <app-notebook></app-notebook>
+    }
+  }
+</main>
+
+<!-- Footer -->
+<footer class="mt-auto border-t border-paper-300/60 dark:border-paper-800/60 py-6 text-center text-xs text-paper-400">
+  <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 font-medium">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-sage-500"></span>
+      <span>QuizCraft AI • Sổ tay ôn tập</span>
+    </div>
+    <div class="font-hand text-sm text-terracotta-600 dark:text-terracotta-400">
+      Biến ghi chép thô thành kiến thức sâu sắc 💡
+    </div>
+  </div>
+</footer>
