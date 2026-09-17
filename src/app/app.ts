@@ -7,6 +7,7 @@ import { StudyDeckComponent } from './features/study-deck/study-deck.component';
 import { SummaryComponent } from './features/summary/summary.component';
 import { HistoryComponent } from './features/history/history.component';
 import { ReviewDeckComponent } from './features/history/review-deck.component';
+import { AuthModalComponent } from './features/auth/auth-modal.component';
 import { QuizStateService } from './core/services/quiz-state.service';
 
 @Component({
@@ -16,6 +17,7 @@ import { QuizStateService } from './core/services/quiz-state.service';
     CommonModule,
     HeaderComponent,
     ToastComponent,
+    AuthModalComponent,
     NotebookComponent,
     StudyDeckComponent,
     SummaryComponent,

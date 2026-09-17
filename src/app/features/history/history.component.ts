@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QuizStateService } from '../../core/services/quiz-state.service';
 import { AudioService } from '../../core/services/audio.service';
+import { AuthService } from '../../core/services/auth.service';
 import { QuizHistoryItem } from '../../core/models/history.model';
 
 @Component({
@@ -40,56 +41,80 @@ import { QuizHistoryItem } from '../../core/models/history.model';
 
       <!-- History card items -->
       <div class="flex-1 overflow-y-auto p-4 space-y-3">
-        @if (state.historyList().length === 0) {
+        @if (!authService.isLoggedIn()) {
+          <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300/80 dark:border-amber-800 text-xs space-y-2.5">
+            <div class="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-bold">
+              <i class="ph-bold ph-user-circle text-base text-terracotta-600"></i>
+              <span>Nhật ký ôn tập cá nhân</span>
+            </div>
+            <p class="text-paper-600 dark:text-paper-400 text-xs leading-relaxed">
+              Đăng nhập để xem và tự động lưu giữ toàn bộ đề bài ôn tập của riêng bạn.
+            </p>
+            <button 
+              type="button" 
+              (click)="authService.openAuthModal()" 
+              class="w-full py-2.5 px-3 rounded-xl bg-terracotta-600 hover:bg-terracotta-500 text-white font-bold text-xs transition cursor-pointer text-center shadow-sm"
+            >
+              Đăng nhập ngay
+            </button>
+          </div>
+
           <div class="text-center py-16 text-paper-400 space-y-2">
-            <i class="ph-thin ph-bookmark-simple text-4xl block mx-auto"></i>
-            <p class="text-xs">Chưa có đề ôn tập nào được lưu lại.</p>
+            <i class="ph-thin ph-lock-key text-4xl block mx-auto text-paper-300 dark:text-paper-600"></i>
+            <p class="text-xs">Bạn chưa đăng nhập. Vui lòng đăng nhập để xem nhật ký của mình.</p>
           </div>
         } @else {
-          @for (d of state.historyList(); track d.id || $index) {
-            <div 
-              (click)="openReview(d)"
-              class="p-3.5 rounded-2xl border border-paper-300 dark:border-paper-800 bg-white dark:bg-paper-800/40 hover:border-terracotta-400 transition space-y-2 cursor-pointer group shadow-sm"
-            >
-              <div class="flex items-start justify-between gap-2">
-                <h4 class="font-serif font-bold text-sm text-paper-900 dark:text-paper-100 group-hover:text-terracotta-600 transition line-clamp-1">
-                  {{ d.deckTitle }}
-                </h4>
-                <span 
-                  [class]="d.scorePercentage >= 80 
-                    ? 'bg-sage-100 text-sage-800 dark:bg-sage-900/60 dark:text-sage-300' 
-                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300'"
-                  class="text-[10px] font-extrabold px-2 py-0.5 rounded font-mono shrink-0"
-                >
-                  {{ d.scorePercentage }}% ({{ d.correctAnswers }}/{{ d.totalQuestions }})
-                </span>
-              </div>
-              <p class="text-xs text-paper-400 line-clamp-2 font-sans">
-                {{ d.noteSnippet }}
-              </p>
-              <div class="flex items-center justify-between text-[11px] text-paper-400 pt-1 font-mono">
-                <span>{{ formatDate(d.createdAt) }}</span>
-                <div class="flex items-center gap-2">
-                  <button 
-                    type="button"
-                    (click)="deleteItem(d.id, $event)"
-                    class="p-1 text-paper-400 hover:text-terracotta-600 dark:hover:text-terracotta-400 transition cursor-pointer" 
-                    title="Xóa bản ghi này"
+          @if (state.historyList().length === 0) {
+            <div class="text-center py-16 text-paper-400 space-y-2">
+              <i class="ph-thin ph-bookmark-simple text-4xl block mx-auto"></i>
+              <p class="text-xs">Chưa có đề ôn tập nào được lưu lại.</p>
+            </div>
+          } @else {
+            @for (d of state.historyList(); track d.id || $index) {
+              <div 
+                (click)="openReview(d)"
+                class="p-3.5 rounded-2xl border border-paper-300 dark:border-paper-800 bg-white dark:bg-paper-800/40 hover:border-terracotta-400 transition space-y-2 cursor-pointer group shadow-sm"
+              >
+                <div class="flex items-start justify-between gap-2">
+                  <h4 class="font-serif font-bold text-sm text-paper-900 dark:text-paper-100 group-hover:text-terracotta-600 transition line-clamp-1">
+                    {{ d.deckTitle }}
+                  </h4>
+                  <span 
+                    [class]="d.scorePercentage >= 80 
+                      ? 'bg-sage-100 text-sage-800 dark:bg-sage-900/60 dark:text-sage-300' 
+                      : 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300'"
+                    class="text-[10px] font-extrabold px-2 py-0.5 rounded font-mono shrink-0"
                   >
-                    <i class="ph-bold ph-trash"></i>
-                  </button>
-                  <span class="text-terracotta-600 dark:text-terracotta-400 font-sans font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                    Xem lại <i class="ph-bold ph-arrow-right"></i>
+                    {{ d.scorePercentage }}% ({{ d.correctAnswers }}/{{ d.totalQuestions }})
                   </span>
                 </div>
+                <p class="text-xs text-paper-400 line-clamp-2 font-sans">
+                  {{ d.noteSnippet }}
+                </p>
+                <div class="flex items-center justify-between text-[11px] text-paper-400 pt-1 font-mono">
+                  <span>{{ formatDate(d.createdAt) }}</span>
+                  <div class="flex items-center gap-2">
+                    <button 
+                      type="button"
+                      (click)="deleteItem(d.id, $event)"
+                      class="p-1 text-paper-400 hover:text-terracotta-600 dark:hover:text-terracotta-400 transition cursor-pointer" 
+                      title="Xóa bản ghi này"
+                    >
+                      <i class="ph-bold ph-trash"></i>
+                    </button>
+                    <span class="text-terracotta-600 dark:text-terracotta-400 font-sans font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      Xem lại <i class="ph-bold ph-arrow-right"></i>
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            }
           }
         }
       </div>
 
       <!-- Clear all history footer -->
-      @if (state.historyList().length > 0) {
+      @if (authService.isLoggedIn() && state.historyList().length > 0) {
         <div class="p-4 border-t border-paper-200 dark:border-paper-800">
           <button 
             type="button"
@@ -149,6 +174,7 @@ import { QuizHistoryItem } from '../../core/models/history.model';
 export class HistoryComponent {
   readonly state = inject(QuizStateService);
   readonly audioService = inject(AudioService);
+  readonly authService = inject(AuthService);
 
   readonly isConfirmClearOpen = signal<boolean>(false);
 

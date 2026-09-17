@@ -1,10 +1,11 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, effect } from '@angular/core';
 import confetti from 'canvas-confetti';
 import { ActiveDeck, QuestionItem } from '../models/quiz.model';
 import { QuizHistoryItem } from '../models/history.model';
 import { AudioService } from './audio.service';
 import { QuizApiService } from './quiz-api.service';
 import { ToastService } from './toast.service';
+import { AuthService } from './auth.service';
 
 export type AppView = 'notebook' | 'loading' | 'study' | 'summary' | 'history' | 'review';
 
@@ -23,6 +24,7 @@ export class QuizStateService {
   private readonly audioService = inject(AudioService);
   private readonly apiService = inject(QuizApiService);
   private readonly toast = inject(ToastService);
+  private readonly authService = inject(AuthService);
 
   readonly currentView = signal<AppView>('notebook');
 
@@ -56,10 +58,23 @@ export class QuizStateService {
   }
 
   constructor() {
-    this.fetchHistory();
+    // Automatically load history when user logs in, and clear when logged out
+    effect(() => {
+      const loggedIn = this.authService.isLoggedIn();
+      if (loggedIn) {
+        this.fetchHistory();
+      } else {
+        this.historyList.set([]);
+      }
+    });
   }
 
   fetchHistory(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.historyList.set([]);
+      return;
+    }
+
     this.apiService.getHistory().subscribe({
       next: (list) => {
         this.historyList.set(list || []);
@@ -236,12 +251,14 @@ export class QuizStateService {
       })
     };
 
-    this.apiService.saveHistory(historyItem).subscribe({
-      next: () => {
-        this.fetchHistory();
-      },
-      error: (err) => console.warn('Failed to save quiz history:', err)
-    });
+    if (this.authService.isLoggedIn()) {
+      this.apiService.saveHistory(historyItem).subscribe({
+        next: () => {
+          this.fetchHistory();
+        },
+        error: (err) => console.warn('Failed to save quiz history:', err)
+      });
+    }
   }
 
   retryWrongOnly(): void {
