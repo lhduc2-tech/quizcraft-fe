@@ -5,6 +5,7 @@ import { QuizStateService } from '../../core/services/quiz-state.service';
 import { AudioService } from '../../core/services/audio.service';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { ToastService } from '../../core/services/toast.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ActiveDeck } from '../../core/models/quiz.model';
 import { QuizHistoryItem } from '../../core/models/history.model';
 
@@ -277,6 +278,7 @@ export class NotebookComponent {
   readonly audioService = inject(AudioService);
   readonly apiService = inject(QuizApiService);
   readonly toast = inject(ToastService);
+  readonly authService = inject(AuthService);
 
   isLoading = false;
 
@@ -409,6 +411,11 @@ export class NotebookComponent {
       error: (err) => {
         this.isLoading = false;
         console.warn('Backend API error:', err);
+        if (err?.error?.requiresLogin) {
+          this.toast.show(err.error.message || 'Khách vãng lai tối đa chỉ được tạo 30 câu hỏi. Vui lòng đăng nhập để tiếp tục!', 'warning');
+          this.authService.openAuthModal();
+          return;
+        }
         this.toast.show('Không thể kết nối Quiz-Service. Chuyển sang bộ câu hỏi dự phòng...', 'warning');
         this.fallbackDeck(rawNote);
       }
